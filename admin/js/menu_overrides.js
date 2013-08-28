@@ -110,11 +110,22 @@ menu_overrides.initialize_events = function() {
     }
 }
 
+menu_overrides.show_default = function() {
+    var parentMenusContainer = menu_overrides.get_parent_menus(); 
+    
+    var currentElement = $( 'td:contains(\"'+ parentMenusContainer[0] +'\")' ); 
+    
+    var menuElement = $( currentElement ).parent().parent().parent(); 
+    
+    $( menuElement ).trigger( 'click' ); 
+}
+
 $( document ).ready(
         function() {
             menu_overrides.MENU_ITEMS = TREE_ITEMS; 
             menu_overrides.hide_all_submenus(); 
             menu_overrides.initialize_events();
+            menu_overrides.show_default();
         }
 ); 
    
