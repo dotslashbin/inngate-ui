@@ -726,6 +726,10 @@ html>body div.info ul, html>body div.success ul, html>body div.error ul
     
 }
 
+#leftmenu table tbody tr td {
+    padding: 3px 0px 3px 0px; 
+}
+
 #leftmenu * {
     font-size: 16px;
 }

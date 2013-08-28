@@ -8,7 +8,7 @@ var tree_tpl = {
 							// other possible values are: _blank, _parent, _search, _self and _top
 
 	'icon_e'  : 'js/icons/empty.gif', // empty image
-	'icon_l'  : 'js/icons/line.gif',  // vertical line
+	'icon_l'  : 'js/icons/empty.gif',  // vertical line
 
     'icon_32' : 'js/icons/base.gif',   // root leaf icon normal
     'icon_36' : 'js/icons/base.gif',   // root leaf icon selected
@@ -26,8 +26,8 @@ var tree_tpl = {
 	'icon_0'  : 'js/icons/page.gif', // leaf icon normal
 	'icon_4'  : 'js/icons/page.gif', // leaf icon selected
 	
-	'icon_2'  : 'js/icons/joinbottom.gif', // junction for leaf
-	'icon_3'  : 'js/icons/join.gif',       // junction for last leaf
+	'icon_2'  : 'js/icons/emtpy.gif', // junction for leaf
+	'icon_3'  : 'js/icons/emtpy.gif',       // junction for last leaf
 	'icon_18' : 'js/icons/plusbottom.gif', // junction for closed node
 	'icon_19' : 'js/icons/plus.gif',       // junctioin for last closed node
 	'icon_26' : 'js/icons/minusbottom.gif',// junction for opened node
@@ -44,8 +44,8 @@ var tree_tpl = {
 	'icon_91' : 'js/icons/minus.gif',
 	'icon_64' : 'js/icons/page.gif',
 	'icon_68' : 'js/icons/page.gif',
-	'icon_66' : 'js/icons/joinbottom.gif',
-	'icon_67' : 'js/icons/join.gif',
+	'icon_66' : 'js/icons/empty.gif',
+	'icon_67' : 'js/icons/empty.gif',
 	'icon_96' : 'js/icons/page.gif',
 	'icon_100' : 'js/icons/page.gif',
 	'icon_112' : 'js/icons/base.gif',
