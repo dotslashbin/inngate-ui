@@ -57,6 +57,8 @@ menu_overrides.hide_all_submenus = function() {
         
         var menuContentElements = $( menuElement ).next(); 
         $( menuContentElements ).hide(); 
+        $( menuElement ).css( 'background-color', '#E2E2E2' ); 
+        $( menuContentElements ).css( 'background-color', '#E2E2E2' ); 
     }
 }
 
@@ -97,6 +99,10 @@ menu_overrides.initialize_events = function() {
                 function() {
                     var elementToShow = $( this ).next(); 
                     menu_overrides.hide_all_submenus(); 
+                    
+                    $( this ).css( 'background-color', '#FEFFC7'); 
+                    $( elementToShow ).css( 'background-color', '#FEFFC7'); 
+                    
                     $( elementToShow ).show(); 
                 }
 
