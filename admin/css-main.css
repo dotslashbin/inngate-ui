@@ -212,6 +212,7 @@ html>body #topright a
 {
     float: right;
     clear: right;
+    padding-right: 10px !important; 
 }
 
 /*
