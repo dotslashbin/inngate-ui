@@ -1,0 +1,68 @@
+<?php
+if (file_exists($_SERVER['DOCUMENT_ROOT'].'/www/pub'.$_SERVER['PHP_SELF'])) {
+    header('Location: /www/pub'.$_SERVER['PHP_SELF']);
+}
+
+require_once($_SERVER['DOCUMENT_ROOT'].'/cfg.ant');
+
+//
+// seasonal error message rotator
+//
+if (trim($_GET['msg']) == '') { // use random messages if none is provided
+    $secsPerMsg = 300;
+
+    $error = array(
+        s('PAGE_ERROR_MESSAGE_1'),
+        s('PAGE_ERROR_MESSAGE_2'),
+        s('PAGE_ERROR_MESSAGE_3'),
+        s('PAGE_ERROR_MESSAGE_4'),
+        s('PAGE_ERROR_MESSAGE_5'),
+        s('PAGE_ERROR_MESSAGE_6'),
+        s('PAGE_ERROR_MESSAGE_7'),
+        s('PAGE_ERROR_MESSAGE_8'),
+        s('PAGE_ERROR_MESSAGE_9'),
+        s('PAGE_ERROR_MESSAGE_10'),
+    );
+
+    $msg = $error[(time() / $secsPerMsg) % count($error)];
+} else {
+    $msg = trim($_GET['msg']);
+}
+
+if (trim($_GET['title']) == '') {
+    $title = s('PAGE_ERROR_TITLE');
+} else {
+    $title = trim($_GET['title']);
+}
+?>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" href="../general.css">
+    <title><?php echo $title ?></title>
+    <script language="JavaScript" type="text/javascript">
+    function break_out_frames()
+    {
+        if (top.location != location) {
+            top.location.href = document.location.href ;
+        }
+    }
+    </script>
+</head>
+
+<body onLoad="break_out_frames()">
+<center>
+    <div class="error_page">
+        <div class="error_page_hdr">
+            <p><?php echo $title ?></p>
+        </div>
+        <div class="error_page_msg">
+            <p><?php echo $msg; ?><br><?php echo s('PAGE_ERROR_TRY_AGAIN') ?>
+            <br><?php echo s('PAGE_ERROR_CONTACT_ADMIN') ?></p>
+            <p><a href="javascript:window.history.back()"><?php echo s('PAGE_ERROR_BACK_LINK') ?></a></p>
+        </div>
+    </div>
+</center>
+</body>
+
+</html>

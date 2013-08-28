@@ -1,0 +1,57 @@
+<?php
+//
+// Include all pre-processing pages
+//
+require_once($_SERVER['DOCUMENT_ROOT'].'/cfg.ant');     // Main configuration (paths, etc)
+
+//
+// Classes and utilities
+//
+require_once(Config::get('dirFramework').'/class-Language.php');
+$language = new Language();
+$language->includeLanguageFile(Config::get('dirFramework'));
+?>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" href="../general.css">
+    <title><?php echo s('TXT_PRODUCT_TITLE', 'framework') ?></title>
+    <script language="JavaScript" type="text/javascript">    
+    function break_out_frames()
+    {
+        if (top.location != location) {
+            top.location.href = document.location.href ;
+        }
+    }
+    </script>
+</head>
+
+<center>
+<body onLoad="break_out_frames(); ">
+
+<div class="login">
+    <div class="login_logo" align="center">
+        <img src="<?php echo Config::get('urlAdmin') ?>/img-product.gif" border="0" alt="<?php echo s('TXT_PRODUCT_TITLE', 'framework'); ?>">
+    </div>
+    <div class="login_form">
+    <table>
+    <tr>
+        <td align="center">
+            <br>
+            <?php 
+            if (strlen($_GET['act']) <= 30) {
+                echo '<div style="font-size: 18px; font-weight: bold; width: 350px">'.$_GET['act'].'</div>';
+            } else {
+                echo '<div style="font-size: 14px; width: 350px">'.$_GET['act'].'</div>';
+            }
+             ?>
+        </td>
+    </tr>
+    </table>
+    </div>
+</div>
+
+</body>
+</center>
+</html>

@@ -1,0 +1,771 @@
+/*
+ *
+ *  For Use in Main Pages
+ *
+ */
+
+
+/*
+ *
+ *  Default HTML Tag Style Override
+ *
+ */
+
+body
+{
+    background: #FFF;
+    margin: 0px;
+    padding: 0px;
+    font-family: Helvetica, Arial, Verdana, sans-serif;
+    font-size: 11px;
+}
+
+a
+{
+    color: #903;
+    font-family: Helvetica, Arial, Verdana, sans-serif;
+    font-size: 11px;
+    text-decoration: none;
+}
+
+a:hover
+{
+    text-decoration: underline;
+    color: #903;
+}
+
+caption
+{
+    text-align: left;
+    font-size: 14px;
+    color: #333;
+    margin: 0;
+    padding: 2px;
+}
+
+form
+{
+    margin: 0px;
+    padding: 0px;
+}
+
+input
+{
+    vertical-align: middle;
+    font-family: Helvetica, Arial, Verdana, sans-serif;
+    font-size: 11px;
+    margin: auto;
+}
+
+input.button
+{
+    padding: 0px 5px;
+}
+
+html>body input.radio, html>body input.checkbox
+{
+    margin-right: 5px;
+}
+
+.textbox
+{
+    margin-top: -6px;
+}
+
+html>body .textbox
+{
+    margin-top: -2px;
+}
+
+select
+{
+    font-family: Helvetica, Arial, Verdana, sans-serif;
+    font-size: 11px;
+}
+
+td
+{
+    font-family: Helvetica, Arial, Verdana, sans-serif;
+    font-size: 11px;
+}
+
+textarea
+{
+    font-family: Helvetica, Arial, Verdana, sans-serif;
+    font-size: 11px;
+    height: 100px;
+    width: 250px;
+}
+
+/*
+ *
+ *  ID Definitions
+ *
+ */
+
+/*  Defines Top Section of Content Page  */
+#top
+{
+    background-color: #000;
+    height: 55px;
+    width: auto;
+    color: #FFF;
+    position: relative;
+    border-bottom: 4px solid #ec2b00; 
+}
+
+/*  Defines Breadcrumb Subsection; Part of Top Section  */
+#breadcrumb
+{
+    float: left;
+	position: absolute;
+	bottom: 5px;
+    margin-left: 8px;
+    cursor: default;
+}
+
+html>body #breadcrumb
+{
+    margin-left: 16px;
+}
+
+/*  Defines Top-Right Subsection (Username and Logout Button); Part of Top Section  */
+#topright
+{
+    float: right;
+    text-align: right;
+    margin-right: 7px;
+    margin-top: 6px;
+}
+
+html>body #topright
+{
+    margin-right: 15px;
+    margin-top: 7px;
+}
+
+/*  Defines Middle Section of Content Page  */
+#middle
+{
+    padding: 15px 15px 0px 15px;
+}
+
+/*  Defines Bottom Section  */
+#bottom
+{
+    background-image: url(img-brand.gif);
+    background-repeat: no-repeat;
+    background-position: center right;
+    opacity: 0.3;
+    height: 55px;
+    margin-right: 15px;
+}
+
+/*  For Use with Breadcrumb Display  */
+#breadcrumb a
+{
+    text-decoration: none;
+    color: #F00;
+    cursor: pointer;
+}
+
+#breadcrumb .current
+{
+    font-size: 14px;    
+}
+
+#breadcrumb a:hover
+{
+    text-decoration: underline;
+    color: #F00;
+}
+
+#systitle
+{
+	font-weight: bold;
+	font-size: 14px;
+	padding-bottom: 10px;
+}
+
+/*  For Use with User Name Display  */
+#topright a
+{
+    font-size: 9px;
+    text-decoration: none;
+    color: #FFF;
+    margin-right: 15px;
+}
+
+html>body #topright a
+{
+    margin-right: 5px;
+}
+
+#topright a:hover
+{
+    font-size: 9px;
+    text-decoration: underline;
+    color: #FFF;
+}
+
+#menubtn
+{
+    float: right;
+    clear: right;
+}
+
+/*
+ *
+ *  Class Definitions
+ *
+ */
+
+.block
+{
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.section
+{
+    margin: 0px;
+    clear: left;
+}
+
+.left
+{
+    clear: both;
+    float: left;
+}
+
+.right
+{
+    float: right;
+    text-align: right;
+}
+
+.title
+{
+    color: #333;
+    font-size: 18px;
+}
+
+.caption
+{
+    color: #333;
+    font-size: 14px;
+}
+
+.hint
+{
+    display: inline;
+    font-size: 9px;
+    font-style: italic;
+}
+
+.wrapper
+{
+    border: 0px;
+    border-collapse: collapse;
+    margin: 0px;
+    padding: 0px;
+}
+
+.plusminus
+{
+    vertical-align: top;
+}
+
+.dateTimeLink
+{
+    background: #CCC;
+    border-top: 1px solid #999;
+    border-left: 1px solid #999;
+    border-right: 1px solid #333;
+    border-bottom: 1px solid #333;
+    display: inline;
+    line-height: 1.5;
+    padding: 0px 5px;
+    text-align: center;
+}
+
+.dateTimeLink a
+{
+    color: #333;
+    text-decoration: none;
+}
+
+.dateTimeLink a:hover
+{
+    color: #903;
+    text-decoration: none;
+}
+
+.controlPane
+{
+    clear: both;
+    float: left;
+    margin-top: 20px;
+}
+
+/**
+ * Paging Links on List Tables
+ */
+.pagingText
+{
+    color: #999;
+}
+
+.pagingCurrent
+{
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.pagingLeftBottom
+{
+    clear: both;
+    float: left;
+    margin-top: 0.25em;
+    margin-bottom: 0.75em;
+}
+
+.pagingLeftTop
+{
+    clear: both;
+    float: left;
+    margin-top: 0.85em;
+}
+
+.pagingRightBottom
+{
+    float: right;
+    text-align: right;
+    margin-bottom: 0;
+}
+
+.pagingRightTop
+{
+    float: right;
+    text-align: right;
+    margin: 0.5em 0;
+}
+
+/**
+ * Filter Form on List Tables
+ */
+.filterError
+{
+    color: #F00;
+}
+
+.filterResult
+{
+    font-weight: bold;
+}
+
+/*
+ * +------+
+ * | Tabs |
+ * +------+
+ */
+
+.tabmenu
+{
+    float: left;
+    width: 97.1%;
+    border: 0px;
+    border-bottom: 1px solid #999;
+    line-height: 1;
+    margin: 2px 0px 15px 0px;
+}
+
+html>body .tabmenu
+{
+    width: 100%;
+}
+
+.tabmenu a
+{
+    color: #333;
+    text-decoration: none;
+}
+
+.tabmenu a:hover
+{
+    color: #903;
+    text-decoration: none;
+}
+
+.tabmenu ul
+{
+    padding: 0px;
+    margin: 0px;
+    list-style: none;
+}
+
+.tabmenu li
+{
+    background: #CCC;
+    color: #EEE;
+    float: left;
+    padding: 3px 4px;
+    border-top: 1px solid #999;
+    border-left: 1px solid #999;
+    border-right: 1px solid #999;
+    text-align: center;
+}
+
+.tabmenu li.current
+{
+    color: #903;
+    cursor: pointer;
+    font-weight: bold;
+    border-top: 1px solid #EEE;
+    border-left: 1px solid #EEE;
+    border-right: 1px solid #999;
+}
+
+.tabmenu li.disabled
+{
+    color: #999;
+    cursor: default;
+    border-top: 1px solid #999;
+    border-left: 1px solid #999;
+    border-right: 1px solid #999;
+}
+
+.tabmenu li.space
+{
+    background: #FFF;
+    border: 0px;
+    float: left;
+    padding: 2px;
+}
+
+/*
+ * +-----------+
+ * | List Form |
+ * +-----------+
+ */
+
+.listform
+{
+    clear: both;
+}
+
+.listform .right
+{
+    cursor: default;
+}
+
+.listform caption
+{
+    margin: -5px 0px 0px 0px;
+}
+
+.listform input
+{
+    margin: 2px;
+}
+
+.listform table
+{
+    border: 1px solid #999;
+    margin-bottom: 5px;
+    margin-top: 1px;
+    padding: 0px;
+    width: 100%;
+}
+
+.listform th
+{
+    font-family: Helvetica, Arial, Verdana, sans-serif;
+    font-size: 11px;
+    vertical-align: middle;
+    font-weight: normal;
+    border-top: 1px solid #FFF;
+    border-left: 1px solid #FFF;
+    border-right: 1px solid #999;
+    border-bottom: 1px solid #999;
+    cursor: default;
+    width: auto;
+}
+
+.listform th a
+{
+    cursor: pointer;
+}
+
+.listform td
+{
+    font-family: Helvetica, Arial, Verdana, sans-serif;
+    font-size: 11px;
+    vertical-align: middle;
+    border-right: 1px solid #DDD;
+    border-bottom: 1px solid #DDD;
+    width: auto;
+}
+
+/*
+ * +------------+
+ * | Input Form |
+ * +------------+
+ */
+
+.inputform
+{
+    clear: left;
+}
+
+.inputform caption
+{
+    margin: -5px 0px 0px 0px;
+}
+
+.inputform table
+{
+    clear: left;
+    border: 1px solid #ddd;
+    margin-top: 2px;
+    margin-left: 1px;
+    margin-bottom: 5px;
+    background: #F0F0F0;
+    border-collapse: collapse;
+}
+
+.inputform td
+{
+    font-family: Helvetica, Arial, Verdana, sans-serif;
+    font-size: 11px;
+    vertical-align: middle;
+    padding: 5px;
+}
+
+/*
+ * +-------------+
+ * | Table Cells |
+ * +-------------+
+ */
+
+td.inputform_errmsg
+{
+    color: #F00;
+    font-size: 9px;
+    font-weight: bold;
+    padding-right: 50px;
+    padding-left: 15px;
+}
+
+td.label_top
+{
+    vertical-align: top;
+    text-align: right;
+    cursor: default;
+}
+
+td.label
+{
+    text-align: right;
+    cursor: default;
+}
+
+td.required
+{
+    font-weight: bold;
+}
+
+td.required:before
+{
+    content: "* ";
+}
+
+/*
+ * +------------------+
+ * | Table Rows/Cells |
+ * +------------------+
+ */
+
+.error
+{
+    background-color: #FEE;
+}
+
+.error_over
+{
+    background-color: #FEE;
+    color: #903;
+}
+
+.even
+{
+    background-color: #F0F0F0;
+}
+
+.even_over
+{
+    background-color: #F0F0F0;
+    color: #903;
+}
+
+.header
+{
+    background-color: #CCC;
+}
+
+.odd
+{
+    background-color: #FFF;
+}
+
+.odd_over
+{
+    background-color: #FFF;
+    color: #903;
+}
+
+.success
+{
+    background-color: #E2F9E3;
+}
+
+.success_over
+{
+    background-color: #E2F9E3;
+    color: #903;
+}
+
+.highlight
+{
+    background-color: #FFC;
+}
+
+.highlight_over
+{
+    background-color: #FFC;
+    color: #903;
+}
+
+/*
+ * +--------------+
+ * | Notice Boxes |
+ * +--------------+
+ */
+
+div.success
+{
+    width: 522px;
+    margin-left: 1px;
+    margin-bottom: 15px;
+    padding: 3px;
+    background-color: #E2F9E3;
+    border: 1px solid #060;
+}
+
+div.error
+{
+    width: 522px;
+    margin-left: 1px;
+    margin-bottom: 15px;
+    padding: 3px;
+    background-color: #FEE;
+    border: 1px solid #F00;
+}
+
+div.info
+{
+    width: 522px;
+    margin-left: 1px;
+    margin-bottom: 15px;
+    padding: 3px;
+    background-color: #FFC;
+    border: 1px solid #FA0;
+}
+
+html>body div.info, html>body div.success, html>body div.error
+{
+    width: 514px;
+}
+
+div.info ul, div.success ul, div.error ul
+{
+    margin: 20px 40px;
+}
+
+html>body div.info ul, html>body div.success ul, html>body div.error ul
+{
+    margin: 15px 0px;
+}
+
+/*
+ * +-----------+
+ * | Left menu |
+ * +-----------+
+ */
+
+#leftframe
+{
+    background-color: #E2E2E2;
+    padding: 0px;
+    margin: 0px;
+    width: 95%;
+    overflow-x: hidden;
+}
+
+#leftmenu
+{
+    background-color: #E2E2E2;
+    vertical-align: top;
+    padding: 4px;
+}
+
+#leftmenu a
+{
+    text-decoration: none;
+    color: #333;
+}
+
+#leftmenu a:hover
+{
+    text-decoration: none;
+    color: #903;
+}
+
+#leftmenu > div
+{
+    padding-bottom: 6px;
+}
+
+#leftmenu > table tr td
+{
+    font-weight: bold;
+}
+
+#logo
+{
+    background-color: #000000;
+    width: 200px;
+    height: 55px;
+    padding-left: 10px;
+    padding-top: 5px;
+    border-bottom: 4px solid #ec2c00; 
+}
+
+div#logo > a > img {
+    margin-left: 30px !important;
+}
+
+html>body #logo
+{
+    width: 100%;
+    height: 50px;
+}
+
+#bottom-logo-container {
+    height: 44px;
+    width: 100%;
+    background: url( 'left-bottom-logo.png' ) no-repeat #FFFFFF; 
+    margin-top: 30px;
+    position: absolute; 
+    bottom: 0; 
+}

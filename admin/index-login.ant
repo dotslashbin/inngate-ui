@@ -1,0 +1,378 @@
+<?php
+//
+// Include all pre-processing pages
+//
+require_once($_SERVER['DOCUMENT_ROOT'].'/cfg.ant');     // Main configuration (paths, etc)
+
+//
+// Classes and utilities
+//
+require_once(Config::get('dirFramework').'/class-AdminAccount.php');
+require_once(Config::get('dirFramework').'/class-Audit.php');
+require_once(Config::get('dirFramework').'/class-Db.php');
+require_once(Config::get('dirFramework').'/class-Language.php');
+require_once(Config::get('dirFramework').'/class-ModulePreference.php');
+
+//
+// Object initializations
+//
+$adminAccount = new AdminAccount();
+$audit = new Audit($_POST['accountId']);
+$db = &new Db(Config::get('dbHost'), Config::get('dbUser'), Config::get('dbPass'), Config::get('dbName'));
+$language = new Language();
+$modulePreference = &new ModulePreference();
+
+//
+// Check for access limitation to admin system
+//
+if (!checkUserAccess()) {
+    Utilities::goTo(Config::get('urlError').'/403.ant');
+}
+
+//
+// Include a language file for template
+//
+$language->includeLanguageFile(Config::get('dirFramework'));
+
+//
+// Check if EULA is accepted 
+//
+define('LICENSE_EULA_AGREEMENT_FILE', '/etc/permanent/.license/antlabs-agreement');
+define('LICENSE_VERSION_FILE', '/etc/permanent/.license/antlabs-release');
+
+$version = file_get_contents(LICENSE_VERSION_FILE);
+
+if ($version >= '3.10' && !file_exists(LICENSE_EULA_AGREEMENT_FILE)) {
+    Utilities::goTo('index-eula.ant');
+}
+
+//
+// Redirect user to index page if user is already logged in
+// or after successful first time login password change
+//
+if (($adminAccount->isLoggedIn() && !isset($_POST['action'])) || (isset($_POST['action']) && $_POST['action'] == 'continue')) {
+    header('Location: '.Config::get('urlAdmin').'/');
+}
+
+//
+// Get any messages
+//
+if (isset($_GET['msg']) && $_GET['msg'] != '') {
+    $msg = $_GET['msg'];
+}
+
+//
+// Executed after user enters login credentials
+//
+if (isset($_POST['action']) && $_POST['action'] == 'login') {
+    if ($adminAccount->validateLogin($_POST['accountId'], $_POST['pass'])) {
+        $audit->setRecord('SUCCESS', 'ADTMSG_LOGIN');
+
+        if ($adminAccount->isFirstLogin()) {
+            $firstLogin = TRUE;
+        } else {
+            header('Location: '.Config::get('urlAdmin').'/');
+        }
+    } else {
+        $msg = $adminAccount->getError();
+        $auditMsg = getAuditErrorMsg($msg);
+        $audit->setRecord('ERROR', $auditMsg);
+        $msg = ($msg == 'ACCOUNT_ID_ERROR' || $msg == 'ACCOUNT_PASSWORD_ERROR') ? s('ERRMSG_ADMIN_ACCT_ERROR', 'framework') : s($auditMsg, 'framework');
+    }
+}
+
+//
+// Executed if user chooses to change password on first time login
+//
+if (isset($_POST['action']) && $_POST['action'] == 'save') {
+    $passwordChanged = FALSE;
+
+    if (trim($_POST['pass1']) == '') {
+        $msg = s('ERRMSG_ADMIN_ACCT_NEW_PASS_BLANK', 'framework');
+    } elseif (trim($_POST['pass2']) == '') {
+        $msg = s('ERRMSG_ADMIN_ACCT_NEW_REPASS_BLANK', 'framework');
+    } elseif (trim($_POST['pass1']) != trim($_POST['pass2'])) {
+        $msg = s('ERRMSG_ADMIN_ACCT_NEW_PASS_ERROR', 'framework');
+    }
+
+    if ($msg == '') {
+        if (!$adminAccount->savePassword($_POST['pass1'])) {
+            $msg = getFriendlyErrorMsg($adminAccount->getError());
+            $audit->setRecord('ERROR', $msg);
+            $msg = s($msg, 'framework');
+            $firstLogin = TRUE;
+        } else {
+            $passwordChanged = TRUE;
+        }
+    } else {
+        $firstLogin = TRUE;
+    }
+}
+
+//
+// Get the System Name
+//
+$sysName = Utilities::getSystemName();
+$pgTitle= ($sysName == '') ? '' : ' ('.htmlspecialchars($sysName).')';
+?>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" href="../general.css">
+    <title><?php echo s('TXT_PRODUCT_TITLE', 'framework').$pgTitle; ?></title>
+    <script language="JavaScript" type="text/javascript">
+    function break_out_frames()
+    {
+        if (top.location != location) {
+            top.location.href = document.location.href ;
+        }
+    }
+    </script>
+</head>
+
+
+<body onLoad="break_out_frames(); document.login.accountId.focus()">
+
+    <div class="login">
+        <div class="login_logo" align="center">
+            <img src="<?php echo Config::get('urlAdmin') ?>/img-product.gif" border="0" alt="<?php echo s('TXT_PRODUCT_TITLE', 'framework'); ?>">
+            <div>
+            <?php if ($sysName != '') { echo '<h3 class="systitle">'. htmlspecialchars($sysName) .'</h3>';  } ?>
+            </div>
+        </div>
+        <div class="login_form">
+
+        <?php 
+
+        if ($firstLogin) { 
+        //
+        // Display this if this is a first time account login
+        //
+
+        ?>
+
+        <form name="first_login" method="post" action="<?php echo $_SERVER['PHP_SELF'] ?>">
+        <input type="hidden" name="action" value="save">
+
+        <table>
+        <tr>
+            <td>
+                <?php echo s('FRMMSG_FIRST_LOGIN', 'framework'); ?>
+                <br><?php echo s('FRMMSG_CHANGE_PASS', 'framework'); ?>
+            </td>
+        </tr>
+        <tr>
+            <td align="center">
+                <table>
+                <tr>
+                    <td align="right">
+                        <?php echo s('FRMLBL_NEW_PASS', 'framework'); ?> :
+                    </td>
+                    <td>
+                        <input type="password" name="pass1" size="20" maxlength="20">
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right">
+                        <?php echo s('FRMLBL_REPASS', 'framework'); ?> :
+                    </td>
+                    <td>
+                        <input type="password" name="pass2" size="20" maxlength="20">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="right">
+                        <input class="button" type="submit" value="<?php echo s('BTN_CHANGE', 'framework'); ?>">
+                        <input class="button" type="button" value="<?php echo s('BTN_SKIP', 'framework'); ?>" onClick="location.href='<?php echo Config::get('urlAdmin') . '/' ?>'">
+                    </td>
+                </tr>
+                </table>
+            </td>
+        </tr>
+        </table>
+
+        <?php 
+
+        } else if ($passwordChanged) { 
+        //
+        // Display this if user successfully changed password on first time login
+        //
+
+        ?>
+
+        <form name="password_changed" method="post" action="<?php echo $_SERVER['PHP_SELF'] ?>">
+        <input type="hidden" name="action" value="continue">
+
+        <table>
+        <tr>
+            <td>
+                <br><?php echo s('FRMMSG_PASS_CHANGED', 'framework'); ?>
+                <br><?php echo s('FRMMSG_PASS_REMINDER', 'framework'); ?>
+                <br><?php echo s('FRMMSG_CONTINUE', 'framework'); ?>
+                <br>&nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td align="right">
+                <input type="submit" value="<?php echo s('BTN_CONTINUE', 'framework'); ?>">
+            </td>
+        </tr>
+        </table>
+
+        <?php
+
+        } else { 
+        //
+        // Default display for login
+        //
+
+        ?>
+
+        <form name="login" method="post" action="<?php echo $_SERVER['PHP_SELF'] ?>">
+        <input type="hidden" name="action" value="login">
+
+        <table>
+        <tr>
+            <td align="right">
+                <?php echo s('FRMLBL_ID', 'framework'); ?> :
+            </td>
+            <td>
+                <input type="text" name="accountId" size="20" maxlength="20">
+            </td>
+        </tr>
+        <tr>
+            <td align="right">
+                <?php echo s('FRMLBL_PASS', 'framework'); ?> :
+            </td>
+            <td>
+                <input type="password" name="pass" size="20" maxlength="20">
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" align="right">
+                <input class="button" type="submit" value="<?php echo s('BTN_LOGIN', 'framework'); ?>">
+            </td>
+        </tr>
+        </table>
+
+        <?php } ?>
+
+        </div>
+        <div id="login-message-container">
+        <?php
+        
+        if (isset($msg)) {
+        //
+        // Display messages if any
+        //
+
+        ?>
+
+            <div class="login_msg">
+                <br><?php echo $msg ?>
+            </div>
+
+        <?php
+
+        }
+        ?>
+        </div>
+
+        </div>
+        </form>
+</body>
+<?php
+
+// ================
+// Helper Functions
+// ================
+function checkUserAccess()
+{
+    global $db;
+    global $modulePreference;
+
+    if ($_SERVER['REMOTE_ADDR'] == '127.0.0.1' && $_SERVER['SERVER_ADDR'] == '127.0.0.1' && $_SERVER['SERVER_PORT'] == '80') {
+        //
+        // This is a HTTP request, deny access at all times
+        //
+        return FALSE;
+    }
+
+    //
+    // Check if LAN access is denied
+    //
+    if ($modulePreference->get('framework', 'deny_lan_access') == '1') {
+        if (existIp($_SERVER['REMOTE_ADDR']) || $_SERVER['REMOTE_ADDR'] == '127.0.0.1') {
+            return FALSE;
+        }
+    }
+
+    //
+    // Check if IP filtering is on and match IP addresses
+    //
+    if ($modulePreference->get('framework', 'ip_filtering') == '1') {
+        $rsl = &$db->query("SELECT * FROM admin_ip_filter WHERE group_id = 0");
+
+        if ($rsl) {
+            while ($row = $rsl->fetch()) {
+                if (checkIpNetwork($_SERVER['REMOTE_ADDR'], $row['ip_netmask'])) {
+                    return TRUE;
+                }
+            }
+        }
+
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
+function checkIpNetwork($ip, $network)
+{
+    $ipArr = explode('/', $network);
+    $networkLong = ip2long($ipArr[0]);
+    $x = ip2long($ipArr[1]);
+    $mask = long2ip($x) == $ipArr[1] ? $x : 0xffffffff << (32 - $ipArr[1]);
+    $ipLong = ip2long($ip);
+
+    return ($ipLong & $mask) == ($networkLong & $mask);
+}
+
+function existIp($ip)
+{
+    exec('echo "client select ipaddr == '.$ip.' do inspect done quit" | nc -w 2 127.0.0.1 507', $execOutput);
+
+    foreach ($execOutput as $execOutputLine) {
+        $execOutputLine = trim($execOutputLine);
+
+        if (strstr($execOutputLine, $ip)) {
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+function getAuditErrorMsg($msg)
+{
+    switch($msg) {
+        case 'ACCOUNT_DISABLED':
+            return 'ERRMSG_ADMIN_ACCT_DISABLED';
+
+        case 'ACCOUNT_ID_ERROR':
+            return 'ERRMSG_ADMIN_ACCT_ID_ERROR';
+
+        case 'ACCOUNT_PASSWORD_ERROR':
+            return 'ERRMSG_ADMIN_ACCT_PASSWORD_ERROR';
+
+        case 'GROUP_MAXLOGIN':
+            return 'ERRMSG_ADMIN_GRP_LOGIN_LIMIT';
+
+        case 'SESSION_ERROR':
+            return 'ERRMSG_ADMIN_SESSION_ERROR';
+
+        default:
+            return 'ERRMSG_LOGIN_ERROR';
+    }
+}
+?>

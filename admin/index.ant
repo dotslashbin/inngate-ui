@@ -1,0 +1,26 @@
+<?php
+//
+// Include all pre-processing pages
+//
+require_once($_SERVER['DOCUMENT_ROOT'].'/cfg.ant');     // Main configuration (paths, etc)
+
+$sysName = Utilities::getSystemName();
+$sysName = ($sysName == '')? '' : ' ('.htmlspecialchars($sysName).')';
+?>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title><?php echo s('TXT_PRODUCT_TITLE', 'framework').$sysName; ?></title>
+</head>
+
+<frameset cols="200,*" frameborder="NO" border="0" framespacing="0">
+    <frame name="left" src="<?php echo Config::get('urlAdmin') ?>/index-left.ant" noresize>
+    <frame name="main" src="<?php echo Config::get('urlAdmin') ?>/index-main.ant" noresize>
+</frameset>
+
+<noframes>
+    <body bgcolor="#FFFFFF" text="#000000">
+        <?php echo s('MSCMSG_NO_FRAME_SUPPORT', 'framework'); ?>
+    </body>
+</noframes>
+</html>

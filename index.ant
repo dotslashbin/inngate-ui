@@ -1,0 +1,12 @@
+<?php
+require_once($_SERVER['DOCUMENT_ROOT'].'/cfg.ant');
+
+// Global sleep for 1 second
+sleep(1);
+
+
+if (Utilities::isInstalled('ezxcess'))
+   if ($_SERVER['HTTPS'] == "on") {
+    header('Location: http://www.antlabs.com/ezxcess/');
+   }
+?>

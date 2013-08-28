@@ -1,0 +1,406 @@
+<?php
+//
+// Prevent caching
+//
+header('Expires: Fri, 31 Oct 1998 15:00:00 GMT');
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+header('Cache-Control: no-store, no-cache, must-revalidate');  // HTTP/1.1
+header('Cache-Control: post-check=0, pre-check=0', false);  // HTTP/1.1
+header('Pragma: no-cache');  // HTTP/1.0
+
+//
+// This is to prevent buffering when downloading CSV files
+//
+if (!isset($_GET['d'])) {
+    ob_start();
+}
+
+//
+// Include all pre-processing pages
+//
+require_once($_SERVER['DOCUMENT_ROOT'].'/cfg.ant');     // Global configuration (paths, etc)
+
+//
+// Classes and utilities
+//
+require_once(Config::get('dirFramework').'/class-AdminAccess.php');
+require_once(Config::get('dirFramework').'/class-AdminAccount.php');
+require_once(Config::get('dirFramework').'/class-Audit.php');
+require_once(Config::get('dirFramework').'/class-Display.php');
+require_once(Config::get('dirFramework').'/class-HtmlTable.php');
+require_once(Config::get('dirFramework').'/class-Validation.php');
+require_once(Config::get('dirFramework').'/cfg-menu.php');
+
+//
+// Initialize account and user information
+//
+$adminAccount = &new AdminAccount();
+
+if (!$adminAccount->isSessionActive($status)) {
+    $adminAccount->logout();
+    if( $_GET['noframe'] == 'yes' )
+    { //Prevent login page shown in the div
+        echo(s('MSCMSG_IDLE_TIMEOUT', 'framework'));
+        die;
+    }
+    $status = ($status == 'EXPIRED') ? '?msg='.urlencode(s('MSCMSG_IDLE_TIMEOUT', 'framework')) : '';
+    Utilities::goTo(Config::get('urlAdmin').'/index-login.ant'.$status);
+}
+
+//
+// Initialize access and audit objects
+//
+$adminAccess = &new AdminAccess($adminAccount->getField('groupId'));
+$audit = &new Audit($adminAccount->getField('accountId'));
+
+//
+// Handle f= parameter
+//
+$fFilename = Utilities::getFilePath($_GET['m'], $_GET['f']);
+
+if (!isset($_GET['p']) && isset($_GET['f']) && !ereg('.php$', $_GET['f']) && is_readable($fFilename)) {
+    if (!function_exists('mime_content_type')) {
+        function mime_content_type($f) {
+            $f = escapeshellarg($f);
+            return trim( `file -bi $f` );
+        }
+    }
+
+    ob_end_clean();
+    header('Content-Type: '.mime_content_type($fFilename));
+    set_time_limit(0);
+    @readfile($fFilename);
+    exit();
+}
+
+//
+// Handle d= parameter for CSV downloads
+//
+$dFullFilename = Utilities::getCsvPath($_GET['m'], $_GET['d']);
+
+if (isset($_GET['d']) && !isset($_GET['p']) && !isset($_GET['f']) && is_readable($dFullFilename)) {
+    set_time_limit(0);
+    include_once($dFullFilename);
+    header('Pragma: public'); // HTTP 1.0
+    header('Cache-Control: public'); // HTTP 1.1
+    header('Cache-Control: must-revalidate, post-check=0, pre-check=0'); // HTTP 1.1
+    header('Expires: 0');
+    header('Content-Description: File Transfer');
+    header('Content-Type: application/force-download');
+
+    if (is_integer(strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'msie')) && is_integer(strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'win'))) {
+        header('Content-Disposition: attachment; filename="'.$dFilename.'"');
+    } else {
+        header('Content-Disposition: filename="'.$dFilename.'"');
+    }
+
+    header('Content-Transfer-Encoding: binary');
+    readfile($rFilename);
+    unlink($rFilename);
+    exit();
+}
+
+//
+// Custom URL for form posting
+//
+Config::set('url', Utilities::getPageUrl($_GET['m'], $_GET['p'], $_GET['b']));
+
+//
+// Check if user access levels allows viewing of current module page
+//
+getMenuProperty('action');
+$defaultModule = empty($defaultModule) ? 'log.status' : $defaultModule;
+$defaultPage = empty($defaultPage) ? 'status' : $defaultPage;
+
+if (Config::get('menuAction') != '') {
+    if (!$adminAccess->isPermitted(Config::get('menuAction'))) {
+        $_GET['m'] = $defaultModule;
+        $_GET['p'] = $defaultPage;
+        echo '<script language="Javascript">parent.left.refresh()</script>';
+    }
+}
+
+//
+// Instantiate Display and HtmlTable class
+//
+$table = &new HtmlTable();
+$display = &new Display();
+
+//
+// Include language file for module if selected
+//
+$_GET['m'] = (isset($_GET['m'])) ? $_GET['m'] : $defaultModule;
+$_GET['p'] = (isset($_GET['p'])) ? $_GET['p'] : $defaultPage;
+
+//
+// Get the System Name and Produce Name
+//
+$sysName = Utilities::getSystemName();
+$productName = file('/etc/permanent/.license/antlabs-name');
+$productName = trim($productName[0]);
+
+//
+// Get the breadcrumb
+//
+if($productName != 'InnGate')
+{
+    getBreadcrumb();  // disabled for IG3
+}
+
+//
+// Include selected module file
+//
+if (is_readable(Utilities::getPagePath($_GET['m'], $_GET['p']))) {
+    include_once(Utilities::getPagePath($_GET['m'], $_GET['p']));
+} else {
+    if (!($_GET['m'] == $defaultModule && $_GET['p'] == $defaultPage)) {
+        include_once(Utilities::getPagePath('', 'error'));
+    }
+}
+
+//
+// Assign module page to buffer variable and get breadcrumb for page
+//
+$modulePage = ob_get_clean();
+
+if( $_GET['noframe'] != 'yes' )
+{
+    //
+    // Extra Header: function to unselect a menu item
+    //
+    $display->addHeader('<script language="JavaScript"> function unselectMenuItem() { parent.left.unselect(); } </script>');
+
+    //
+    // Render headers
+    //
+    $display->printHeader();
+
+    //
+    // Top section
+    //
+    $display->divOpen('id', 'top');
+
+    $display->divOpen('id', 'breadcrumb');
+    $display->divOpen('id','systitle');
+    $display->divContent(htmlspecialchars($sysName));
+    $display->divClose();
+    if($productName != 'InnGate' && $adminAccess->isPermitted(Config::get('menuAction')))
+    {
+        $display->divContent(Config::get('breadcrumb'));
+    }
+    $display->divClose();
+
+    $display->divOpen('id', 'topright');
+    $display->divContent(userInfo(&$adminAccount, &$display));
+    $display->divContent(btnLogout());
+    $display->divClose();
+    $display->divClose();
+
+    //
+    // Middle section
+    //
+    $display->divOpen('id', 'middle');
+    $display->divContent(rtrim($modulePage));
+    $display->divClose();
+
+    //
+    // Bottom section
+    //
+    $display->divOpen('id', 'bottom');
+    $display->divClose();
+
+    //
+    // Render content and footer
+    //
+    $display->divOpen('style', 'color: #FFF;');
+    $display->divClose();
+    $display->printFooter();
+
+    if (Config::get('langDebug')) {
+        debLang();
+    }
+}
+else
+{
+    echo( rtrim( $modulePage ) );
+}
+/*
+ * HELPER FUNCTIONS
+ */
+function btnLogout()
+{
+    return '<input type="button" value="'.s('BTN_LOGOUT', 'framework').'" onClick="location.href=\''.Config::get('urlAdmin').'/index-logout.ant\'">';
+}
+
+function debLang()
+{
+    echo "\n\n";
+    echo '<div class="block listform" style="margin-left: 15px; width: 75%"><table cellpadding="4" cellspacing="0">';
+
+    if (!is_array(Config::get('lang', $_GET['m']))) {
+        echo 'Cannot find language file';
+        return;
+    }
+
+    echo '<caption>Language Check</caption>';
+
+    foreach (Config::get('lang', $_GET['m']) as $k => $v) {
+        $tmp[$k] = $v;
+    }
+
+    ksort($tmp);
+
+    foreach ($tmp as $k => $v) {
+        if (!strstr($k, $oldK)) {
+            switch ($k) {
+                case strstr($k, 'ACTION'):
+                    $oldK = 'ACTION';
+                    echo '<tr class="header"><td colspan="2">Actions</td></tr>';
+                    break;
+
+                case strstr($k, 'ADTMSG'):
+                    $oldK = 'ADTMSG';
+                    echo '<tr class="header"><td colspan="2">Audit Messages</td></tr>';
+                    break;
+
+                case strstr($k, 'BTN'):
+                    $oldK = 'BTN';
+                    echo '<tr class="header"><td colspan="2">Button Texts</td></tr>';
+                    break;
+
+                case strstr($k, 'ERRMSG'):
+                    $oldK = 'ERRMSG';
+                    echo '<tr class="header"><td colspan="2">Error Messages</td></tr>';
+                    break;
+
+                case strstr($k, 'FRMLBL'):
+                    $oldK = 'FRMLBL';
+                    echo '<tr class="header"><td colspan="2">Form Labels</td></tr>';
+                    break;
+
+                case strstr($k, 'MNU'):
+                    $oldK = 'MNU';
+                    echo '<tr class="header"><td colspan="2">Menu Texts</td></tr>';
+                    break;
+
+                case strstr($k, 'MSCMSG'):
+                    $oldK = 'MSCMSG';
+                    echo '<tr class="header"><td colspan="2">Misc Messages</td></tr>';
+                    break;
+
+                case strstr($k, 'TBLHDR'):
+                    $oldK = 'TBLHDR';
+                    echo '<tr class="header"><td colspan="2">Table Headers</td></tr>';
+                    break;
+
+                case strstr($k, 'TXT'):
+                    $oldK = 'TXT';
+                    echo '<tr class="header"><td colspan="2">Misc Texts</td></tr>';
+                    break;
+
+                case strstr($k, 'MODULE'):
+                    $oldK = 'MODULE';
+                    echo '<tr class="header"><td colspan="2">Module Name</td></tr>';
+                    break;
+
+                default:
+                    if ($oldK != 'UNKNOWN') {
+                        $oldK = 'UNKNOWN';
+                        echo '<tr bgcolor="red"><td colspan="2"><b>UNKNOWN</b></td></tr>';
+                    }
+
+                    break;
+            }
+        }
+
+        echo '<tr><td>'.$k.'</td><td>'.$v.'</td></tr>';
+    }
+
+    echo '</table></div>';
+}
+
+function getBreadcrumb($menu = '', $parent = '')
+{
+    $menu = ($menu == '') ? Config::get('menu') : $menu;
+
+    foreach ($menu as $k => $v) {
+        if (isset($v['url']) && '/admin/'.$v['url'] == Config::get('url')) {
+            makeBreadcrumb($parent.'|'.$k);
+        }
+
+        if (isset($v['submenu'])) {
+            $trail = ($parent == '') ? $k : $parent.'|'.$k;
+            getBreadcrumb($v['submenu'], $trail);
+        }
+    }
+}
+
+function getMenuProperty($type, $menu = '')
+{
+    $menu = ($menu == '') ? Config::get('menu') : $menu;
+
+    if (is_array($menu)) {
+        foreach ($menu as $k => $v) {
+            if (isset($v['url']) && '/admin/'.$v['url'] == Config::get('url')) {
+                switch ($type) {
+                    case 'action':
+                        Config::set('menuAction', $v['action']);
+                        break;
+
+                    case 'text':
+                        Config::set('menuText', $v['text']);
+                        break;
+
+                    case 'url':
+                        Config::set('menuUrl', $v['url']);
+                        break;
+                }
+
+                break;
+            }
+
+            if (is_array($v['submenu'])) {
+                getMenuProperty($type, $v['submenu']);
+            }
+        }
+    }
+}
+
+function makeBreadcrumb($trail)
+{
+    $keys = explode('|', $trail);
+    Config::clear('breadcrumb');
+
+    foreach ($keys as $key) {
+        makeBreadcrumbLink($key);
+    }
+}
+
+function makeBreadcrumbLink($key, $menu = '')
+{
+    $menu = ($menu == '') ? Config::get('menu') : $menu;
+
+    foreach ($menu as $k => $v) {
+        if ($k == $key) {
+            $bcClass = ('/admin/'.$v['url'] == Config::get('url')) ? ' class="current"' : '';
+            $bcLink = (isset($v['url'])) ? '<a href="'.$v['url'].'"'.$bcClass.'"'.(($bcClass == ' class="current"') ? '' : ' onClick="unselectMenuItem();"').'>'.$v['text'].'</a>' : $v['text'];
+
+            if (Config::get('breadcrumb') == '') {
+                Config::set('breadcrumb', $bcLink);
+            } else {
+                Config::set('breadcrumb', Config::get('breadcrumb').'&nbsp;&raquo;&nbsp;'.$bcLink);
+            }
+        }
+
+        if (isset($v['submenu'])) {
+            makeBreadcrumbLink($key, $v['submenu']);
+        }
+    }
+}
+
+function userInfo(&$adminAccount, &$display)
+{
+    return $display->link('href', Utilities::getPageUrl('admin', 'user'), 'title', s('TXT_LOGGED_IN', 'framework').': '.$adminAccount->getField('prefTimestamp'), 'label', $adminAccount->getField('accountName'), 'onclick', 'unselectMenuItem();').'<br>';
+}
+
+?>

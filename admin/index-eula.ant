@@ -1,0 +1,283 @@
+<?php
+// Include all pre-processing pages
+//
+require_once($_SERVER['DOCUMENT_ROOT'].'/cfg.ant');     // Main configuration (paths, etc)
+
+//
+// Classes and utilities
+//
+require_once(Config::get('dirFramework').'/class-Display.php');
+
+//
+// Object initializations
+//
+$display = new Display();
+
+//
+// Create the EULA agreement file
+//
+define('LICENSE_EULA_AGREEMENT_FILE', '/etc/permanent/.license/antlabs-agreement');
+define('LICENSE_ACTIVATION_FILE', '/etc/permanent/.license/antlabs-activation');
+define('LICENSE_VERSION_FILE', '/etc/permanent/.license/antlabs-release');
+
+$version = file_get_contents(LICENSE_VERSION_FILE);
+
+$msg = '';
+$AGREE = 'yes_i_do';
+
+if (isset($_POST['agree']) && $_POST['agree'] == $AGREE)
+{
+    exec('sudo /usr/local/sbin/accept_eula', $output = array(), $ret);
+    if ($ret != 0)
+    {
+        $msg = s('PAGE_ERROR_MESSAGE_7', 'framework');
+    }
+    else
+    {
+        if ($version >= '3.10')
+        {
+            exec('sudo /usr/local/sbin/activate_product', $output = array(), $ret);
+            if ($ret != 0)
+            {
+                $msg = s('PAGE_ERROR_MESSAGE_7', 'framework');
+            }
+            else
+            {
+                if (file_exists(LICENSE_EULA_AGREEMENT_FILE) && file_exists(LICENSE_ACTIVATION_FILE))
+                {
+                    Utilities::goTo('index-login.ant');
+                }
+            }
+        }
+        else
+        {
+            if (file_exists(LICENSE_EULA_AGREEMENT_FILE))
+            {
+                echo '<script>window.opener.location.href = window.opener.location.href; window.close();</script>';
+            }
+        }
+    }
+}
+
+//
+// Shutdown the machine
+//
+if (isset($_POST['shutdown_token']) && isset($_SESSION['shutdown_token']) && ($_POST['shutdown_token'] == $_SESSION['shutdown_token'])) {
+    //sudo shutdown -f 
+    shutdown();
+} else {
+    $_SESSION['shutdown_token'] = 'shutdown-token'.rand(1,99999);
+}
+?>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" href="css-main.css">
+<title><?php echo s('TXT_PRODUCT_TITLE', 'framework') ?></title>
+<script language="JavaScript" type="text/javascript">
+function break_out_frames()
+{
+    if (top.location != location) {
+        top.location.href = document.location.href ;
+    }
+}
+</script>
+</head>
+
+<body onLoad="break_out_frames();" style="margin:10px;">
+<!-- EULA -->
+<style>
+.clear {
+    clear: both; 
+}
+.box_header {
+    height: 31px; 
+    background-color: #222; 
+    font-family: georgia; 
+    font-size: 18px;
+    font-weight: lighter; 
+    padding: 8px 0px 0px 11px;
+    color: #ffffff; 
+    width: inherit;
+}
+.box_row {
+    font-family: arial; 
+    font-size: 12px; 
+    font-weight: 100; 
+    padding: 12px 11px 11px 11px; 
+    -moz-border-radius:6px;
+    -webkit-border-radius:6px;
+    border-radius:6px;
+    border:1px solid #d83526;
+}
+.myButton {
+    -moz-box-shadow:inset 0px 1px 0px 0px #f29c93;
+    -webkit-box-shadow:inset 0px 1px 0px 0px #f29c93;
+    box-shadow:inset 0px 1px 0px 0px #f29c93;
+    background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #fe1a00), color-stop(1, #ce0100) );
+    background:-moz-linear-gradient( center top, #fe1a00 5%, #ce0100 100% );
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#fe1a00', endColorstr='#ce0100');
+    background-color:#fe1a00;
+    -moz-border-radius:6px;
+    -webkit-border-radius:6px;
+    border-radius:6px;
+    border:1px solid #d83526;
+    display: inline-block;
+    color:#ffffff;
+    font-family:arial;
+    font-size:15px;
+    font-weight:bold;
+    padding:6px 24px;
+    text-decoration:none;
+    text-shadow:1px 1px 0px #b23e35;
+}
+.myButton:hover {
+    background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ce0100), color-stop(1, #fe1a00) );
+    background:-moz-linear-gradient( center top, #ce0100 5%, #fe1a00 100% );
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ce0100', endColorstr='#fe1a00');
+    background-color:#ce0100;
+    text-decoration:none !important;
+    color:#FFF;
+}
+.myButton:active {
+    position: relative;
+    top:1px;
+}
+</style>
+<?php 
+if ($msg != '')
+{
+    $display->msg($msg, 'error');
+}
+?>
+<div class="box_row">
+    <div class="box_header">End User License Agreement</div>
+<p>IMPORTANT—READ CAREFULLY: This End-User License Agreement (&quot;EULA&quot;) is a legal agreement between you (either an individual or a single entity) and Advanced Network Technology Laboratories Pte Ltd (&quot;ANT<i>labs</i>&quot;) for the Product and Software (as defined below). This agreement affects your rights so carefully read all of it before you accept it. You have no right to access the internet (or do anything else) using this Network (as defined below) or the Product and Software unless you agree to all of the conditions described below.<br>
+  <br>
+  YOU AGREE TO BE BOUND BY THE TERMS OF THIS EULA BY INSTALLING, COPYING, OR OTHERWISE ACCESSING THE INTERNET (OR DOING ANYTHING ELSE) USING THIS NETWORK OR THE PRODUCT OR SOFTWARE. IF YOU DO NOT AGREE, DO NOT INSTALL, COPY, OR USE THE PRODUCT OR SOFTWARE OR ACCESS THE INTERNET (OR DO ANYTHING ELSE) USING THE NETWORK—PLEASE DISCONNECT NOW. IF YOU BOUGHT THE PRODUCT, YOU MAY RETURN IT TO THE PLACE OF PURCHASE FOR A FULL REFUND, IF APPLICABLE.<br>
+  </p>
+<p>By continuing, you agree that if you violate the terms of this agreement, you may be subject to prosecution and damages. You also agree that ANT<i>labs</i> will not be responsible for any harm caused by anything related to the Network connection. You also agree that you are on notice that ANT<i>labs</i> does not provide any warranties related to the Network.<br>
+  </p>
+<p>By clicking &quot;I agree&quot; at the bottom of this webpage, you agree to these terms.<br>
+  </p>
+<p>1. <strong>License Grant.</strong> If you meet the conditions described below, ANT<i>labs</i> grants you a non-exclusive, non-transferable license to use the Product, Software, and Network to connect to the internet in a lawful way. You have no right to do anything else with the Product, Software, or Network.<br>
+  </p>
+<p>2. <strong>Requirements</strong><br>
+  2.1<strong> Access is restricted.</strong> You shall not permit or otherwise facilitate unauthorized access to the Network.<br>
+  2.2                <strong>No copying. </strong>You shall not copy any portion the Product or Software.<br>
+  2.3                <strong>Expressly permitted use only.</strong> You shall not use the Product, Software or Network except as expressly permitted by this Agreement.<br>
+  2.4                <strong>No distribution.</strong> You shall not distribute, rent, loan, lease, sub-licence, or otherwise transfer or deal in the Software.<br>
+  2.5                <strong>No alterations.</strong> You shall not alter the Product, Software, or Network in any way, including but not limited to removing, changing, or obscure any product identification, altering any notices, or attempting to reverse engineer the Product, Software, or Network, or any part of it.<br>
+  2.6                <strong>No improper access.</strong> You shall not access anything not intentionally made available in the ordinary operation of the Product, Software, or Network, including but not limited to internal binaries, configuration files, or log files.<br>
+  2.7                <strong>No unlawful use.</strong> You shall not use the Product, Software, or Network in connection with any unlawful or improper purpose, including but not limited to accessing forbidden material, monitoring network traffic, downloading or sharing copyrighted material, or violating the rights of others.<br>
+  </p>
+<p>3.<strong> Acceptance.</strong> This Agreement, and all of its terms, grants you permission to use the Product, Software, and Network to access the internet in a lawful manner. Nothing other than this Agreement grants you permission to do anything involving the Product, Software, and Network, including but not accessing the network to which you are presently connected. These actions—including accessing the internet—violate this Agreement if you do not obey the requirements in this Agreement.</p>
+<p>
+  4. <strong>Intellectual Property Rights and Confidentiality.</strong><br>
+  4.1<strong> Intellectual property does not belong to you.</strong> You agree that you do not own any right, title, or interest in and to the Product, Software, or Network, including any copyright, patent, trademarks, or intellectual property rights.  This EULA provides no more than a limited license.<br>
+  4.2                <strong>Confidentiality.</strong> The Product, Software, and Network contain confidential information.<br>
+  (a)  You must keep the Product and Software confidential.<br>
+  (b)  You must notify ANT<i>labs</i> immediately if you become aware of any unauthorized use of any part of the Network or of the Product or Software.<br>
+  4.3                <strong>Protection.</strong><br>
+  (a)  You must take all steps necessary to protect the confidential information and intellectual property rights of ANT<i>labs</i>.<br>
+  (b)  You must assist ANT<i>labs</i> in connection with any efforts to enforce or otherwise protect confidential information or intellectual property rights.<br>
+  </p>
+<p>5. <strong>Limited Warranty For The Product.</strong> Only the original purchaser of the Product and the Software is covered by ANT<i>labs</i>' one-year limited warranty.<br>
+  5.1                <strong>One year of functionality with proper use. </strong>ANT<i>labs</i> warrants the original purchaser of the Product that the Product will provide the functions and facilities described in the user documentation for the Product for 365 days after the original purchaser buys the Product.<br>
+  5.2                <strong>Conditions required for warranty. </strong>The original purchaser shall do all of the following:<br>
+  (a)  purchase the product from an ANT<i>labs</i> authorized dealer;<br>
+  (b)  read and follow the user documentation for assembly, installation, setup, and operating guidelines;<br>
+  (b)  use the Product only in a suitable physical and operating environment as described in the user documentation;<br>
+  (c)  use the Product only for purposes for which it is intended and authorized by ANT<i>labs</i>; and<br>
+  (d)  agree to the terms and conditions set forth in this EULA.<br>
+  5.3                <strong>Conditions forbidden for warranty.</strong> ANT<i>labs</i> will not honor, and the Limited Warranty shall be voided, in the event that any of the following occurs:<br>
+  (a)  tampering with the Product's external label or serial number;<br>
+  (b)  attempting to open the Product's case or shell;<br>
+  (c)  modifying or altering any component, housing, connector, or other physical attribute of the Product;<br>
+  (d)  attempting or actually repairing the Product or replacing the software by anyone other than an ANT<i>labs</i> authorized representative; or<br>
+  (e)  selling or otherwise alienating the Product or Software.<br>
+  5.4                <strong>Remedies.</strong> ANT<i>labs</i>' entire liability, and your exclusive remedy under the Limited Warranty given in this Section 5 will be, at ANT<i>labs</i>' option, to either:<br>
+  (a)  repair or replace the Product;<br>
+  </p>
+<p>6. <strong>Disclaimers. </strong><br>
+  6.1                <strong>Disclaimer of Warranties</strong><br>
+  (a)<strong> DISCLAIMER OF WARRANTIES.</strong> The Limited Warranty that appears in Section 5 is the only warranty made to you and supersedes and any other warranties or similar obligations (if any) created by any advertising, documentation, packaging, or other communications. Except for the Limited Warranty that appears in Section 5, and to the maximum extent permitted by applicable law, no warranties extend beyond the description on the face hereof. ANT<i>labs</i> provides the Product, Software, and Network &quot;AS IS AND WITH ALL FAULTS&quot; without warranty of any kind, either expressed or implied, including, but not limited to, any of the following:<br>
+  (i)       <strong>No warranty about merchantability or fitness. </strong>ANT<i>labs</i> specifically disclaims any and all implied warranties, duties, or conditions of merchantability and fitness for a particular purpose.<br>
+  (ii)       <strong>No warranty about functionality. </strong>Except to the extent provided otherwise in the Limited Warranty that appears in Section 5, ANT<i>labs</i> does not warrant or make any representations that: the Product, Software, or Network or its functionality will meet your requirements or perform as expected; the operation of the Product, Software, or Network will be uninterrupted or error-free; the Product, Software, or Network will not cause interruptions, damage, or improper configuration to any device connected to or operating in conjunction with it, including but not limited to your computer or your Smartphone; or that any defects with the Product, Software, or Network will be corrected. Also, except to the extent provided otherwise in the Limited Warranty above, ANT<i>labs</i> does not warrant or make any representations regarding the use or the results from the use of the Product, Software, or Network, including but not limited to its correctness, accuracy, or reliability.<br>
+  (iii)      <strong>No warranty about intellectual property or title or quiet enjoyment or possession.</strong> ANT<i>labs</i> does not warrant or represent, and specifically disclaims, any warranty or condition of title, quiet enjoyment, quiet possession, correspondence to description or non-infringement with regard to the Product, Software, or Network. ANT<i>labs</i> further does not warrant or represent that your use of the Product, Software, or Network will not infringe the intellectual property rights, including but not limited to patents and copyrights, of any third party.<br>
+  (b)  <strong>No liability. </strong>Unless required by law, ANT<i>labs</i> shall not be liable for injuries arising out of or related to the use of (or inability to use) the Product, Software, or Network (including but not limited to injury or destruction of property) even if ANT<i>labs</i> has been advised of the possibility of such damages.<br>
+  6.2                <strong>Assumption of risk. </strong>The entire risk as to the quality and performance of the Product, Network, and Software is with you. You shall pay all costs necessary to service, repair, or correct any problems caused by the Product, Network, or Software. You shall not assert any claims against ANT<i>labs</i> related to the Product, Network, or Software.<br>
+  6.3                <strong>Exclusion of Incidental, Consequential and Certain other Damages.</strong> To the maximum extent permitted by applicable law, ANT<i>labs</i> AND ITS SUPPLIERS OR DISTRIBUTORS SHALL NOT BE LIABLE FOR ANY SPECIAL, INCIDENTAL, PUNITIVE, INDIRECT, OR CONSEQUENTIAL DAMAGES WHATSOEVER (INCLUDING, BUT NOT LIMITED TO, DAMAGES FOR LOSS OF PROFITS OR CONFIDENTIAL OR OTHER INFORMATION, FOR BUSINESS INTERRUPTION, FOR PERSONAL INJURY, FOR LOSS OF PRIVACY, FOR FAILURE TO MEET ANY DUTY INCLUDING OF GOOD FAITH OR OF REASONABLE CARE, FOR NEGLIGENCE, AND FOR ANY OTHER PECUNIARY OR OTHER LOSS WHATSOEVER) ARISING OUT OF OR IN ANY WAY RELATED TO THE USE OF OR INABILITY TO USE THE PRODUCT, SOFTWARE, OR NETWORK, THE PROVISION OF OR FAILURE TO PROVIDE SUPPORT OR OTHER SERVICES, INFORMATION, SOFTWARE, AND RELATED CONTENT THROUGH THE PRODUCT, SOFTWARE, OR NETWORK, OR OTHERWISE ARISING OUT OF THE USE OF THE PRODUCT, SOFTWARE OR NETWORK, OR OTHERWISE UNDER OR IN CONNECTION WITH ANY PROVISION OF THIS EULA, EVEN IN THE EVENT OF THE FAULT, TORT (INCLUDING NEGLIGENCE AND INTENTIONAL TORTS), MISREPRESENTATION, STRICT LIABILITY, BREACH OF CONTRACT OR BREACH OF WARRANTY OF ANT<i>labs</i> OR ANY SUPPLIER OR DISTRIBUTOR, AND EVEN IF ANT<i>labs</i> OR ANY SUPPLIER OR DISTRIBUTOR HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.<br>
+  6.4<strong> LIMITATION OF LIABILITY AND REMEDIES.</strong> Notwithstanding any damages that you might incur for any reason whatsoever (including, without limitation, all damages referenced herein and all direct or general damages in contract or anything else), ANT<i>labs</i>' MAXIMUM AGGREGATE LIABILITY FROM ALL CLAIMS UNDER THIS EULA OR ANY OTHER LEGAL THEORY RELATED TO THE PRODUCT, SOFTWARE, OR NETWORK (OR ANYONE'S USE UNDER IT), AND YOUR EXCLUSIVE REMEDY HEREUNDER (EXCEPT FOR ANY REMEDY OF REPAIR OR REPLACEMENT ELECTED BY ANT<i>labs</i> WITH RESPECT TO ANY BREACH OF THE LIMITED WARRANTY) SHALL NOT EXCEED THE AMOUNT ACTUALLY PAID BY YOU FOR THE PRODUCT AND SOFTWARE. THESE LIMITATIONS ON POTENTIAL LIABILITIES HAVE BEEN AN ESSENTIAL CONDITION IN SETTING THE PRICE FOR THE PRODUCT AND SOFTWARE AND SHALL APPLY EVEN IF ANY REMEDY FAILS ITS ESSENTIAL PURPOSE.<br>
+  6.5                <strong>Changes.</strong> ANT<i>labs</i> may change the terms and conditions of this Agreement without notice.<br>
+  </p>
+<p>7. <strong>Entire Agreement. </strong>This Agreement constitutes the entire agreement between you and ANT<i>labs</i> and supersedes any other oral or written communications, agreements, or representations, including but not limited to those contained in the manual or displayed by the Network.<br>
+  </p>
+<p>8. <strong>Severability.</strong> If a court of competent jurisdiction holds any Section or part of this Agreement unenforceable, the validity of remainder of the Agreement will not be affected.<br>
+  </p>
+<p>9. <strong>Non-waiver. </strong>ANT<i>labs</i> may enforce or fail to enforce any provision of this agreement at any time. Such action or inaction shall not be construed or deemed a waiver of ANT<i>labs</i> rights. Such action or inaction neither affects the validity any part of this Agreement nor prejudices ANT<i>labs</i> right to take subsequent action.<br>
+  </p>
+<p>10.<strong> Inadequacy of damages in event of breach by you.</strong>You hereby acknowledge that damages are unlikely to be an adequate remedy for any breach by you of the provisions of this Agreement.<br>
+  </p>
+<p>11. <strong>Venue.</strong> This agreement shall be governed and construed under the laws of the Republic of Singapore, without regard to choice of law provisions. Venue and jurisdiction shall be proper only in the courts of the Republic of Singapore and you consent to personal jurisdiction and venue to any court in the Republic of Singapore. In the event that a court of competent jurisdiction judges this provision to be invalid, then this agreement shall be governed and construed under the laws of the State of Minnesota, without regard to choice of law provisions. In that case, venue and jurisdiction shall be proper only in the federal judicial districts of Minnesota and you consent to personal jurisdiction and venue to any federal court in the state of Minnesota.<br>
+  </p>
+<p>12. <strong>Clause headings.</strong> All captions (in bold type) within this Agreement are for convenient reference only and have no effect in limiting or extending the language of the Agreement.<br>
+  </p>
+<p>13. <strong>Definitions. </strong>In this Agreement, unless the context otherwise requires:<br>
+  13.1                License means the non-exclusive right granted by ANT<i>labs</i> to you under this agreement.<br>
+  13.2                Network means the network created by the Product, all Software, and any supporting materials such as manuals.<br>
+  13.3                Product means the ANT<i>labs</i>' InnGate 3 product (to which you are now connected).<br>
+  13.4                Software means all software installed on or by the Product, including but not limited to source code and object code.<br>
+  </p>
+<!-- EULA -->
+<?php 
+if (!file_exists(LICENSE_EULA_AGREEMENT_FILE))
+{
+?>
+<p>14.<strong> Assent. </strong>You agree to be bound by the terms of this contract by clicking on &quot;I agree&quot; below.</p>
+<p>
+  <a href="javascript:do_agree()" class="myButton">I agree</a> 
+  <?php if ($version >= '3.10') { ?>   
+  <a href="javascript:do_shutdown()" class="myButton">Shutdown</a>
+  <?php } else { ?>
+  <a href="javascript:window.close();" class="myButton">Cancel</a>
+  <?php } ?>
+</p>
+</div>
+<form action="index-eula.ant" id='agree_form' method="POST">
+<input type="hidden" name="agree" value="<?php echo $AGREE; ?>"/>
+</form>
+<form action="index-eula.ant" id='shutdown_form' method="POST">
+<input type="hidden" name="shutdown_token" value="<?php echo $_SESSION['shutdown_token']; ?>"/>
+</form>
+<script language="javascript" type="text/javascript">
+function do_agree() {
+    document.getElementById('agree_form').submit();
+}
+function do_shutdown() {
+    document.getElementById('shutdown_form').submit();
+}
+</script>
+<?php
+}
+?>
+</body>
+</html>
+<?php 
+// ================================================================
+// Shutdown system
+// ================================================================
+function shutdown()
+{
+    global $display;
+    
+    $cmd = 'sudo /sbin/init 0 2>&1';
+    exec($cmd, $result, $resl);
+    if ($resl != 0)
+    {
+        $display->msg(s('ERRMSG_SHUTDOWN_FAIL', 'sys'), 'error');    
+        return FALSE;
+    }
+    header('Location: '.Config::get('urlAdmin').'/index-info.ant?act='.urlencode(s('MSCMSG_SHUTTING_DOWN', 'sys')));
+}
+?>

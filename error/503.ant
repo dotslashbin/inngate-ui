@@ -1,0 +1,37 @@
+<?php
+if (file_exists($_SERVER['DOCUMENT_ROOT'].'/www/pub'.$_SERVER['PHP_SELF'])) {
+    header('Location: /www/pub'.$_SERVER['PHP_SELF']);
+}
+
+require_once($_SERVER['DOCUMENT_ROOT'].'/cfg.ant');
+?>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" href="../general.css">
+    <title><?php echo s('PAGE_503_TITLE') ?></title>
+    <script language="JavaScript" type="text/javascript">
+    function break_out_frames()
+    {
+        if (top.location != location) {
+            top.location.href = document.location.href ;
+        }
+    }
+    </script>
+</head>
+
+<body onLoad="break_out_frames()">
+<center>
+    <div class="error_page">
+        <div class="error_page_hdr">
+            <p><?php echo s('PAGE_503_HEADER') ?></p>
+        </div>
+        <div class="error_page_msg">
+            <p><?php echo s('PAGE_503_MESSAGE') ?><br><?php echo s('PAGE_ERROR_CONTACT_ADMIN') ?></p>
+            <p><a href="javascript: window.history.back()"><?php echo s('PAGE_ERROR_BACK_LINK') ?></a></p>
+        </div>
+    </div>
+</center>
+</body>
+
+</html>

@@ -1,0 +1,34 @@
+<?php
+
+//
+// Include all pre-processing pages
+//
+require_once($_SERVER['DOCUMENT_ROOT'].'/cfg.ant');     // Global configuration (paths, etc)
+
+//
+// Classes and utilities
+//
+require_once(Config::get('dirFramework').'/class-AdminAccount.php');
+require_once(Config::get('dirFramework').'/class-Audit.php');
+require_once(Config::get('dirFramework').'/class-Language.php');
+
+//
+// Object initializations
+//
+$adminAccount = new AdminAccount();
+$audit = new Audit($adminAccount->getField('accountId'));
+$language = new Language();
+
+//
+// Include a language file for template
+//
+$language->includeLanguageFile(Config::get('dirFramework'));
+$adminAccount->logout();
+$audit->setRecord('SUCCESS', 'ADTMSG_LOGOUT');
+
+//
+// Redirect to login page
+//
+header('Location: '.Config::get('urlAdmin').'/index-login.ant?msg='.s('MSCMSG_LOGOUT_SUCCESS', 'framework'));
+
+?>

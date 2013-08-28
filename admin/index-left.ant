@@ -1,0 +1,73 @@
+<?php
+//
+// Include all pre-processing pages
+//
+require_once($_SERVER['DOCUMENT_ROOT'].'/cfg.ant');     // Global configuration (paths, etc)
+
+//
+// Classes and utilities
+//
+require_once(Config::get('dirFramework').'/class-AdminAccess.php');
+require_once(Config::get('dirFramework').'/class-AdminAccount.php');
+require_once(Config::get('dirFramework').'/class-Display.php');
+require_once(Config::get('dirFramework').'/class-Menu.php');
+require_once(Config::get('dirFramework').'/cfg-menu.php');
+
+//
+// Initializing menu object will automatically set the current
+// selected item key and node
+//
+$adminAccount = new AdminAccount();
+$adminAccess = new AdminAccess($adminAccount->getField('groupId'));
+$menu = new Menu(Config::get('menu'), Config::get('dirModule'), $adminAccess);
+
+if ($adminAccount->isLoggedIn()) {
+    //
+    // Instantiate Display class
+    //
+    $display = &new Display();
+
+    //
+    // Add custom headers
+    //
+    $display->addHeader('<script language="JavaScript" src="js/tree.js"></script>');
+    $display->addHeader('<script language="JavaScript" src="js/tree_tpl.js"></script>');
+    $display->addHeader('<script language="JavaScript">function refresh() { document.location.href=\''. Config::get('urlAdmin').'/\'; }</script>');
+    
+    $display->addHeader($menu->getJsMenuArray()); 
+    $display->addHeader('<script language="JavaScript" src="js/jquery.js"></script>');
+    $display->addHeader('<script language="JavaScript" src="js/menu_overrides.js"></script>');
+
+    $display->addBodyAttr('id', 'leftframe', 'style', 'padding-bottom: 80px !important; width: 100% !important;' );
+
+    //
+    // Render headers
+    //
+    $display->printHeader();
+
+    //
+    // Logo section
+    //
+    $display->divOpen('id', 'logo' );
+    $display->divContent($display->link('href', Config::get('urlAdmin').'/', 'target', '_top', 'label', $display->image('src', Config::get('urlAdmin').'/img-product.gif', 'border', '0' )));
+    $display->divClose();
+
+    //
+    // Menu section
+    //
+    $display->divOpen('id', 'leftmenu' );
+    $display->divContent($menu->getMenu());
+    $display->divOpen('id', 'menubtn');
+    $display->divContent('<a href="javascript:expand_all()" onmouseover="window.status = \'Open All\'; return true;" onmouseout="window.status = \'\'; return true;"><img src="img-plus.gif" width="13" height="13" alt="Expand All" style="border: 0;" /></a> <a href="javascript:collapse_all()" onmouseover="window.status = \'Close All\'; return true;" onmouseout="window.status = \'\'; return true;"><img src="img-minus.gif" width="13" height="13" alt="Collapse All" style="border: 0;" /></a>');
+    $display->divClose();
+    $display->divClose();
+
+    //
+    // Render contents and footer
+    //
+    $display->printFooter();
+    
+    $display->divOpen( 'id', 'bottom-logo-container' ); 
+    $display->divClose(); 
+}
+?>

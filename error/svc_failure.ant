@@ -1,0 +1,38 @@
+<?php
+require_once($_SERVER['DOCUMENT_ROOT'].'/cfg.ant');
+if (file_exists($_SERVER['DOCUMENT_ROOT'].'/www/pub/messages/svc_failure.ant'))
+{
+    Utilities::goTo('/www/pub/messages/svc_failure.ant');
+}
+?>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" href="../general.css">
+    <title><?php echo $title ?></title>
+    <script language="JavaScript" type="text/javascript">
+    function break_out_frames()
+    {
+        if (top.location != location) {
+            top.location.href = document.location.href ;
+        }
+    }
+    </script>
+</head>
+
+<body onLoad="break_out_frames()">
+<center>
+    <div class="error_page">
+        <div class="error_page_hdr">
+            <p>Service Error</p>
+        </div>
+        <div class="error_page_msg">
+            <p>There is a temporary error in InnGate.  Please try again later</p>
+            <p><a href="javascript:window.history.back()"><?php echo s('PAGE_ERROR_BACK_LINK') ?></a></p>
+        </div>
+    </div>
+</center>
+</body>
+
+</html>
+
