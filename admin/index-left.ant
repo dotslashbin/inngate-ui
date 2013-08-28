@@ -66,8 +66,5 @@ if ($adminAccount->isLoggedIn()) {
     // Render contents and footer
     //
     $display->printFooter();
-    
-    $display->divOpen( 'id', 'bottom-logo-container' ); 
-    $display->divClose(); 
 }
 ?>

@@ -723,6 +723,15 @@ html>body div.info ul, html>body div.success ul, html>body div.error ul
 
 #leftmenu table {
     width: 100%;
+    
+}
+
+#leftmenu * {
+    font-size: 16px;
+}
+
+#leftmenu img.t0im {
+    display: none;
 }
 
 #leftmenu a
