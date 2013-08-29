@@ -109,7 +109,7 @@ html>body .login_form
 {
     margin-bottom: 1em;
     text-align: center;
-    color: #C2C2C2;
+    color: #000000;
 }
 .systitle
 {
@@ -158,7 +158,8 @@ html>body .login_form
     bottom: 0; 
 }
 
-#login-message-container {
+#login-line-container {
     background: #000000; 
-    height: 46px; 
+    height: 4px; 
+    border-bottom: solid #ec2b00 3px
 }

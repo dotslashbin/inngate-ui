@@ -717,17 +717,17 @@ html>body div.info ul, html>body div.success ul, html>body div.error ul
 {
     background-color: #E2E2E2;
     vertical-align: top;
-    padding: 4px;
     width: 100%;
+/*    padding-top: 27px;*/
+    cursor: pointer; 
 }
 
 #leftmenu table {
     width: 100%;
-    
 }
 
 #leftmenu table tbody tr td {
-    padding: 3px 0px 3px 0px; 
+    padding: 5px 0px 5px 27px; 
 }
 
 #leftmenu > div >table > tbody > tr > td > a, #leftmenu > div > div > table > tbody > tr > td > a, #leftmenu > div > div > div > table > tbody > tr > td > a {

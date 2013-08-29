@@ -258,7 +258,8 @@ $pgTitle= ($sysName == '') ? '' : ' ('.htmlspecialchars($sysName).')';
         <?php } ?>
 
         </div>
-        <div id="login-message-container">
+        <div id="login-line-container">
+        </div>
         <?php
         
         if (isset($msg)) {
@@ -278,7 +279,7 @@ $pgTitle= ($sysName == '') ? '' : ' ('.htmlspecialchars($sysName).')';
         ?>
         </div>
 
-        </div>
+        
         </form>
 </body>
 <?php

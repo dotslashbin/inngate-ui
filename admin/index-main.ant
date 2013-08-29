@@ -191,6 +191,7 @@ if( $_GET['noframe'] != 'yes' )
     $display->divClose();
 
     $display->divOpen('id', 'topright');
+    $display->divContent( '<img src="logo-right.jpg"  style="float: left; margin-right: 10px; clear: both;"/>' ); 
     $display->divContent(userInfo(&$adminAccount, &$display));
     $display->divContent(btnLogout());
     $display->divClose();
