@@ -730,6 +730,10 @@ html>body div.info ul, html>body div.success ul, html>body div.error ul
     padding: 3px 0px 3px 0px; 
 }
 
+#leftmenu > div >table > tbody > tr > td > a, #leftmenu > div > div > table > tbody > tr > td > a, #leftmenu > div > div > div > table > tbody > tr > td > a {
+    margin-right: 10px; 
+}
+
 #leftmenu * {
     font-size: 16px;
 }
