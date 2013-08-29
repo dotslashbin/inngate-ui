@@ -28,20 +28,20 @@ var tree_tpl = {
 	
 	'icon_2'  : 'js/icons/emtpy.gif', // junction for leaf
 	'icon_3'  : 'js/icons/emtpy.gif',       // junction for last leaf
-	'icon_18' : 'js/icons/plus-v2.gif', // junction for closed node
-	'icon_19' : 'js/icons/plus-v2.gif',       // junctioin for last closed node
-	'icon_26' : 'js/icons/minus-v2.gif',// junction for opened node
-	'icon_27' : 'js/icons/minus-v2.gif',       // junctioin for last opended node
+	'icon_18' : 'js/icons/02-collapse.gif', // junction for closed node
+	'icon_19' : 'js/icons/02-collapse.gif',       // junctioin for last closed node
+	'icon_26' : 'js/icons/01-expand.gif',// junction for opened node
+	'icon_27' : 'js/icons/01-expand.gif',       // junctioin for last opended node
 	
 	//Special case
-	'icon_82' : 'js/icons/plus-v2.gif',
-	'icon_83' : 'js/icons/plus-v2.gif',
+	'icon_82' : 'js/icons/02-collapse.gif',
+	'icon_83' : 'js/icons/02-collapse.gif',
 	'icon_80' : 'js/icons/page.gif',
 	'icon_84' : 'js/icons/page.gif',
 	'icon_88' : 'js/icons/page.gif',
 	'icon_92' : 'js/icons/page.gif',
-	'icon_90' : 'js/icons/minus-v2.gif',
-	'icon_91' : 'js/icons/minus-v2.gif',
+	'icon_90' : 'js/icons/01-expand.gif',
+	'icon_91' : 'js/icons/01-expand.gif',
 	'icon_64' : 'js/icons/page.gif',
 	'icon_68' : 'js/icons/page.gif',
 	'icon_66' : 'js/icons/empty.gif',

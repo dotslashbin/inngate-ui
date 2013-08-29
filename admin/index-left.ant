@@ -38,7 +38,7 @@ if ($adminAccount->isLoggedIn()) {
     $display->addHeader('<script language="JavaScript" src="js/jquery.js"></script>');
     $display->addHeader('<script language="JavaScript" src="js/menu_overrides.js"></script>');
 
-    $display->addBodyAttr('id', 'leftframe', 'style', 'padding-bottom: 80px !important; width: 100% !important;' );
+    $display->addBodyAttr('id', 'leftframe', 'style', 'width: 100% !important;' );
 
     //
     // Render headers
