@@ -153,7 +153,7 @@ html>body #topright
 /*  Defines Bottom Section  */
 #bottom
 {
-    background-image: url(img-brand.gif);
+    /*background-image: url(img-brand.gif);*/
     background-repeat: no-repeat;
     background-position: center right;
     opacity: 0.3;
