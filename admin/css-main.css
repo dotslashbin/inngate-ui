@@ -146,6 +146,7 @@ html>body #topright
 
 #topright > div#menu-container > input {
     border-style: none;
+    color: #6c5d5b; 
 }
 
 /*  Defines Middle Section of Content Page  */
