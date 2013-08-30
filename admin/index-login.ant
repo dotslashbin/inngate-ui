@@ -42,7 +42,7 @@ define('LICENSE_VERSION_FILE', '/etc/permanent/.license/antlabs-release');
 
 $version = file_get_contents(LICENSE_VERSION_FILE);
 
-if ($version >= '3.10' && !file_exists(LICENSE_EULA_AGREEMENT_FILE)) {
+if ( ( $version >= '3.10' || $version == '1.00' ) && !file_exists(LICENSE_EULA_AGREEMENT_FILE)) {
     Utilities::goTo('index-eula.ant');
 }
 

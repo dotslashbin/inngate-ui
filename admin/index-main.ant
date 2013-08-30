@@ -190,11 +190,21 @@ if( $_GET['noframe'] != 'yes' )
     }
     $display->divClose();
 
-    $display->divOpen('id', 'topright');
-    $display->divContent( '<img src="logo-right.jpg"  style="float: left; margin-right: 10px; clear: both;"/>' ); 
-    $display->divContent(userInfo(&$adminAccount, &$display));
-    $display->divContent(btnLogout());
-    $display->divClose();
+    
+        $display->divOpen('id', 'topright');
+        
+            $display->divOpen( 'id', 'logo-container' ); 
+                $display->divContent( '<img src="logo-right.jpg" />' ); 
+            $display->divClose(); 
+            
+            $display->divOpen( 'id', 'menu-container' ); 
+                $display->divContent(userInfo(&$adminAccount, &$display));
+                $display->divContent(btnLogout());
+            $display->divClose(); 
+            
+        $display->divClose();
+    
+    
     $display->divClose();
 
     //
@@ -401,7 +411,7 @@ function makeBreadcrumbLink($key, $menu = '')
 
 function userInfo(&$adminAccount, &$display)
 {
-    return $display->link('href', Utilities::getPageUrl('admin', 'user'), 'title', s('TXT_LOGGED_IN', 'framework').': '.$adminAccount->getField('prefTimestamp'), 'label', $adminAccount->getField('accountName'), 'onclick', 'unselectMenuItem();').'<br>';
+    return $display->link('href', Utilities::getPageUrl('admin', 'user'), 'title', s('TXT_LOGGED_IN', 'framework').': '.$adminAccount->getField('prefTimestamp'), 'label', $adminAccount->getField('accountName'), 'onclick', 'unselectMenuItem();');
 }
 
 ?>

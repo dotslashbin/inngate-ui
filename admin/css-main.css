@@ -144,6 +144,10 @@ html>body #topright
     margin-top: 7px;
 }
 
+#topright > div#menu-container > input {
+    border-style: none;
+}
+
 /*  Defines Middle Section of Content Page  */
 #middle
 {
@@ -735,7 +739,8 @@ html>body div.info ul, html>body div.success ul, html>body div.error ul
 }
 
 #leftmenu img {
-    margin-right: -7px !important;
+    margin-right: -8px !important;
+    vertical-align: middle !important; 
 }
 
 #leftmenu * {
